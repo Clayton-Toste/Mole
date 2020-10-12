@@ -102,9 +102,7 @@ public:
             ix1 = interpolate(n0, n1, nx);
 
             value = interpolate(ix0, ix1, sy);
-            std::cout<<value<<',';
             result |= (value < PERLIN_CUTOFF)<<x;
-            std::cout<<result<<std::endl;
         }
         return result;
     }

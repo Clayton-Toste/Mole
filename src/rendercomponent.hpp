@@ -5,5 +5,5 @@
 class RenderComponent
 {
 public:
-    virtual int render() const=0;
+    virtual const int render() const=0;
 };

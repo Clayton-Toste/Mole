@@ -12,15 +12,17 @@
 
 
 #define ADD_RENDER(object) objects.push_back(reinterpret_cast<void *>(object));
-#define ADD_OBJECT(object, layer) renderables[layer].push_back(object);
-#define ADD_RENDER_OBJECT(object, layer) ADD_RENDER(object) ADD_OBJECT(object, layer)
+#define ADD_OBJECT(object) renderables.push_back(object);
+#define ADD_RENDER_OBJECT(object) ADD_RENDER(object) ADD_OBJECT(object)
 
 #include "object.hpp"
 #include "rendercomponent.hpp"
 #include "dirt.hpp"
+#include "bg.hpp"
 #include "perlin.hpp"
 
 #include <SDL.h>
+#include <SDL_image.h>
 
 #include <iostream>
 #include <chrono>
@@ -50,10 +52,10 @@ public:
     int execute();
 
     std::list<void *> objects = {};
-    std::list<RenderComponent *> renderables[3] = {};
+    std::list<RenderComponent *> renderables = {};
 
     SDL_Window * display;
-    SDL_Renderer * renderer;
+    SDL_Surface * surface;
 
     unsigned int tiles[LOADED_TILES]={};
 

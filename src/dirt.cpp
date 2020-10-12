@@ -2,12 +2,9 @@
 
 #include <SDL.h>
 
-Dirt::Dirt(MoleApp * const app) : image{app, "dirt.bmp"}, Object{app}
-{
+Dirt::Dirt(MoleApp * const app) : image{app, "assets/dirt.png"}, Object{app} { }
 
-}
-
-int Dirt::render() const 
+const int Dirt::render() const 
 {
     unsigned int error {0};
     double int_part;
@@ -20,8 +17,9 @@ int Dirt::render() const
             {
                 continue;
             }
-            SDL_Rect src{0, TILE_SIZE*GAME_TO_TEXTURE*TEXTURE_HASH(i+(int)app->scroll, j), TILE_SIZE*GAME_TO_TEXTURE, TILE_SIZE*GAME_TO_TEXTURE};
-            SDL_Rect dst{j*TILE_SIZE, (i-fract_part)*TILE_SIZE, TILE_SIZE, TILE_SIZE};
+            int texture{TEXTURE_HASH(i+(int)app->scroll, j)};
+            SDL_Rect src{(TILE_SIZE+2*TEXTURE_TO_GAME)*texture, 0, TILE_SIZE+2*TEXTURE_TO_GAME, TILE_SIZE+2*TEXTURE_TO_GAME};
+            SDL_Rect dst{j*TILE_SIZE-1*TEXTURE_TO_GAME, (i-fract_part)*TILE_SIZE-1*TEXTURE_TO_GAME, TILE_SIZE+2*TEXTURE_TO_GAME, TILE_SIZE+2*TEXTURE_TO_GAME};
             int code = image.render(&src, &dst);
             if (code!=0)
             { 

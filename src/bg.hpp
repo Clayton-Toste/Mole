@@ -4,16 +4,15 @@
 #include "rendercomponent.hpp"
 #include "imagehelper.hpp"
 
-#define TEXTURE_HASH(i, j) int((i+j)*(i+j+1)/2+i) % 4
-
-#include <cmath>
+#define FOREGROUND_SCROLL 1.0/2.0
+#define BACKGROUND_SCROLL 1.0/3.0
 
 class MoleApp;
 
-class Dirt: public RenderComponent, public Object
+class Background: public RenderComponent, public Object
 {
 public:
-    Dirt(MoleApp * const app);
+    Background(MoleApp * const app);
 
     const int render() const;
 

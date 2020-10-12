@@ -12,18 +12,17 @@ ImageHelper::ImageHelper( MoleApp * const app, const char * const name) : Object
     }
 }
 
-int ImageHelper::render(const SDL_Rect * srcrect, const SDL_Rect * dstrect) const
+int ImageHelper::render(const SDL_Rect * srcrect, SDL_Rect * dstrect) const
 {
-    return SDL_RenderCopy(app->renderer, texture, srcrect, dstrect);
+    return SDL_BlitSurface(image, srcrect, app->surface, dstrect);
 }
 
 bool ImageHelper::setImage( const char * name )
 {
     if (
         name == nullptr ||
-        app->renderer == nullptr ||
-        (image = SDL_LoadBMP(name)) == NULL ||
-        (texture = SDL_CreateTextureFromSurface(app->renderer, image)) == NULL
+        app->surface == nullptr ||
+        (image = IMG_Load(name)) == NULL
     )
     {
         return false;

@@ -31,27 +31,27 @@ int MoleApp::execute() {
 bool MoleApp::onInit()
 {
     //Intilize window and renderer
+    int flags = IMG_INIT_PNG;
     if (
         SDL_Init(SDL_INIT_EVERYTHING) < 0 ||
+        !(IMG_Init(flags) & flags) ||
         (display = SDL_CreateWindow("Mole Game", 
                                     SDL_WINDOWPOS_UNDEFINED,
                                     SDL_WINDOWPOS_UNDEFINED,
                                     SCREEN_WIDTH, SCREEN_HEIGHT,
                                     SDL_WINDOW_OPENGL)) == NULL ||
-        (renderer = SDL_CreateRenderer(display,
-                                       -1, 0)) == NULL
+        (surface = SDL_GetWindowSurface( display )) == NULL
     )
     {
         return false;
     }
 
-    Dirt * dirt = new Dirt(this);
-    ADD_RENDER_OBJECT(dirt, 1)
+    ADD_RENDER_OBJECT(new Background(this))
+    ADD_RENDER_OBJECT(new Dirt(this))
     
     for (int i=0; i<LOADED_TILES; i++)
     {
         tiles[i] = perlin::row(i);
-        std::cout<<tiles[i]<<std::endl;
     }
 
     previousTime = std::chrono::high_resolution_clock::now();
@@ -77,21 +77,20 @@ void MoleApp::onUpdate()
 void MoleApp::onRender()
 {
     int failed {0};
-    for (auto layer : renderables)
+    int code;
+    for (auto renderable : renderables)
     {
-        for (auto renderable : layer)
+        if ((code = renderable->render()) != 0)
         {
-            if (renderable->render() != 0)
-            {
-                ++failed;
-            }
+            std::cout<<"Failed to render with error: "<<SDL_GetError()<<'\n';
+            ++failed;
         }
     }
     if (failed)
     {
         std::cout<<"Failed to render "<<failed<<" objects.\n";
     }
-    SDL_RenderPresent(renderer);
+    SDL_UpdateWindowSurface( display );
 }
  
 void MoleApp::onCleanup()
