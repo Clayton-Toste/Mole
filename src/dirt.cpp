@@ -2,9 +2,15 @@
 
 #include <SDL.h>
 
-Dirt::Dirt(MoleApp * const app) : image{app, "assets/dirt.png"}, Object{app} { }
+Dirt::Dirt( MoleApp * const app ) : image{app, "assets/dirt.png"}, Object{app} 
+{
+    for (int i=0; i<LOADED_TILES; i++)
+    {
+        app->tiles[i] = perlin::row(i+app->scroll);
+    }
+}
 
-const int Dirt::render() const 
+const int Dirt::render( ) const 
 {
     unsigned int error {0};
     double int_part;
@@ -18,8 +24,8 @@ const int Dirt::render() const
                 continue;
             }
             int texture{TEXTURE_HASH(i+(int)app->scroll, j)};
-            SDL_Rect src{(TILE_SIZE+2*TEXTURE_TO_GAME)*texture, 0, TILE_SIZE+2*TEXTURE_TO_GAME, TILE_SIZE+2*TEXTURE_TO_GAME};
-            SDL_Rect dst{j*TILE_SIZE-1*TEXTURE_TO_GAME, (i-fract_part)*TILE_SIZE-1*TEXTURE_TO_GAME, TILE_SIZE+2*TEXTURE_TO_GAME, TILE_SIZE+2*TEXTURE_TO_GAME};
+            SDL_Rect src{TILE_TEXTURE_SIZE*texture, 0, TILE_TEXTURE_SIZE, TILE_TEXTURE_SIZE};
+            SDL_Rect dst{j*TILE_SIZE-1*TEXTURE_PIXEL, (i-fract_part)*TILE_SIZE-1*TEXTURE_PIXEL, TILE_TEXTURE_SIZE, TILE_TEXTURE_SIZE};
             int code = image.render(&src, &dst);
             if (code!=0)
             { 

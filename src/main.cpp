@@ -4,6 +4,7 @@ MoleApp::MoleApp() {
 }
  
 int MoleApp::execute() {
+    
     if(!onInit()) 
     {
         std::cout<<"Init failed.\n";
@@ -30,7 +31,7 @@ int MoleApp::execute() {
  
 bool MoleApp::onInit()
 {
-    //Intilize window and renderer
+    // Initialize SDL
     int flags = IMG_INIT_PNG;
     if (
         SDL_Init(SDL_INIT_EVERYTHING) < 0 ||
@@ -46,41 +47,121 @@ bool MoleApp::onInit()
         return false;
     }
 
-    ADD_RENDER_OBJECT(new Background(this))
-    ADD_RENDER_OBJECT(new Dirt(this))
-    
-    for (int i=0; i<LOADED_TILES; i++)
-    {
-        tiles[i] = perlin::row(i);
-    }
+    // Construct objects
+    Background * background = new Background(this);
+    ADD_RENDER_OBJECT(background)
+    Dirt * dirt = new Dirt(this);
+    ADD_RENDER_OBJECT(dirt)
+    Player * player = new Player(this);
+    ADD_RENDER_UPDATE_OBJECT(player)
+    this->player = player;
 
     previousTime = std::chrono::high_resolution_clock::now();
+
     return true;
 }
 
 void MoleApp::onEvent( const SDL_Event * const event ) 
 {
-    if(event->type == SDL_QUIT)
+    switch (event->type)
     {
+    case SDL_QUIT:
         Running = false;
+        return ;
+    case SDL_KEYDOWN:
+        if (event->key.repeat)
+        {
+            return ;
+        }
+        switch (event->key.keysym.sym)
+        {
+            case SDLK_w:
+            case SDLK_UP:
+                player->current_action=Player::move_up;
+                break;
+            case SDLK_a:
+            case SDLK_LEFT:
+                player->current_action=Player::move_left;
+                break;
+            case SDLK_s:
+            case SDLK_DOWN:
+                player->current_action=Player::move_down;
+                break;
+            case SDLK_d:
+            case SDLK_RIGHT:
+                player->current_action=Player::move_right;
+                break;
+            case SDLK_SPACE:
+                player->dig();
+        }
+        break;
+    case SDL_KEYUP:
+        switch (event->key.keysym.sym)
+        {
+            case SDLK_w:
+            case SDLK_UP:
+                if(player->current_action==Player::move_up)
+                {
+                    player->current_action=Player::no_action;
+                }
+                break;
+            case SDLK_a:
+            case SDLK_LEFT:
+                if(player->current_action==Player::move_left)
+                {
+                    player->current_action=Player::no_action;
+                }
+                break;
+            case SDLK_s:
+            case SDLK_DOWN:
+                if(player->current_action==Player::move_down)
+                {
+                    player->current_action=Player::no_action;
+                }
+                break;
+            case SDLK_d:
+            case SDLK_RIGHT:
+                if(player->current_action==Player::move_right)
+                {
+                    player->current_action=Player::no_action;
+                }
+                break;
+        }
+        break;
     }
 }
 
 void MoleApp::onUpdate() 
 {
+    // Update deltatime
     auto currentTime = std::chrono::high_resolution_clock::now();
-    deltaTime = (currentTime - previousTime).count();
+    deltaTime = (currentTime - previousTime).count(); 
     previousTime = currentTime;
-    scroll+=deltaTime/1000000000.0;
+
+    // Update objects
+    int failed {0};
+    for (auto updateable : updateables)
+    {
+
+        if (updateable->update() != 0)
+        {
+            std::cout<<"Failed to update with error: "<<SDL_GetError()<<'\n';
+            ++failed;
+        }
+    }
+    if (failed)
+    {
+        std::cout<<"Failed to update "<<failed<<" objects.\n";
+    }
 }
  
 void MoleApp::onRender()
 {
+    // Render objects
     int failed {0};
-    int code;
     for (auto renderable : renderables)
     {
-        if ((code = renderable->render()) != 0)
+        if (renderable->render() != 0)
         {
             std::cout<<"Failed to render with error: "<<SDL_GetError()<<'\n';
             ++failed;
@@ -90,11 +171,12 @@ void MoleApp::onRender()
     {
         std::cout<<"Failed to render "<<failed<<" objects.\n";
     }
-    SDL_UpdateWindowSurface( display );
+    SDL_UpdateWindowSurface(display);
 }
  
 void MoleApp::onCleanup()
 {
+    // Free Memory for Objects
     for (auto obj : objects)
     {
         delete obj;

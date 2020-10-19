@@ -12,6 +12,11 @@ ImageHelper::ImageHelper( MoleApp * const app, const char * const name) : Object
     }
 }
 
+ImageHelper::~ImageHelper( )
+{
+    SDL_FreeSurface(image);
+}
+
 int ImageHelper::render(const SDL_Rect * srcrect, SDL_Rect * dstrect) const
 {
     return SDL_BlitSurface(image, srcrect, app->surface, dstrect);

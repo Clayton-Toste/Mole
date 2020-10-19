@@ -1,7 +1,7 @@
 #pragma once
 
 #include "object.hpp"
-#include "rendercomponent.hpp"
+#include "components.hpp"
 #include "imagehelper.hpp"
 
 #define FOREGROUND_SCROLL 1.0/2.0
@@ -13,8 +13,9 @@ class Background: public RenderComponent, public Object
 {
 public:
     Background(MoleApp * const app);
+    ~Background( ) { };
 
-    const int render() const;
+    const int render( ) const override;
 
 private:
     const ImageHelper image;
