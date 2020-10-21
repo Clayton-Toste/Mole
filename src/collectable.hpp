@@ -3,22 +3,22 @@
 #include "object.hpp"
 #include "components.hpp"
 #include "imagehelper.hpp"
-#include "perlin.hpp"
 
-#define TEXTURE_HASH(i, j) int((i + j) * (i + j + 1) / 2 + i) % 4
+#define COLLECTABLE_FREQUENCY 128
 
 #include <cmath>
 
 class MoleApp;
 
-class Dirt : public RenderComponent, public Object
+class Collectable : public RenderComponent, public Object
 {
 public:
-    Dirt(MoleApp *const app);
-    ~Dirt(){};
+    Collectable(MoleApp *const app);
+    ~Collectable(){};
 
     void fill();
     void addRow();
+    void collect();
 
     const int render() const override;
 

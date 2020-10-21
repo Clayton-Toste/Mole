@@ -1,36 +1,58 @@
 #include "imagehelper.hpp"
 
-ImageHelper::ImageHelper( MoleApp * const app, const char * const name) : Object(app)
+ImageHelper::ImageHelper(MoleApp *const app, const char *const name) : Object(app)
 {
     if (name == nullptr)
     {
-        return ;
+        return;
     }
     if (!setImage(name))
     {
-        std::cout<<"Failed to create image "<<name<<".\n";
+        std::cout << "Failed to create image " << name << ".\n";
     }
 }
 
-ImageHelper::~ImageHelper( )
+ImageHelper::~ImageHelper()
 {
-    SDL_FreeSurface(image);
+    if (image)
+    {
+        SDL_FreeSurface(image);
+    }
 }
 
-int ImageHelper::render(const SDL_Rect * srcrect, SDL_Rect * dstrect) const
+int ImageHelper::render(const SDL_Rect *srcrect, SDL_Rect *dstrect) const
 {
     return SDL_BlitSurface(image, srcrect, app->surface, dstrect);
 }
 
-bool ImageHelper::setImage( const char * name )
+bool ImageHelper::setImage(const char *name)
 {
     if (
         name == nullptr ||
-        app->surface == nullptr ||
-        (image = IMG_Load(name)) == NULL
-    )
+        (image = IMG_Load(name)) == NULL)
     {
         return false;
     }
     return true;
 }
+
+bool ImageHelper::setText(const char *text, unsigned char size)
+{
+    TTF_Font *font = TTF_OpenFont(FONT, size);
+
+    if (
+        text == nullptr ||
+        font == nullptr ||
+        (image = TTF_RenderText_Solid(font, text, SDL_Color{0, 0, 0})) == NULL)
+    {
+        TTF_CloseFont(font);
+        return false;
+    }
+    TTF_CloseFont(font);
+    return true;
+}
+
+const SDL_Surface *const ImageHelper::getImage() const
+{
+    return image;
+};
