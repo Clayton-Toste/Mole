@@ -21,7 +21,7 @@ const int HUD::render() const
     src = SDL_Rect{0, 0, TILE_SIZE / 2, TILE_SIZE / 2};
     dst = SDL_Rect{COUNTER_PADDING, COUNTER_PADDING, TILE_SIZE / 2, TILE_SIZE / 2};
     code = image.render(&src, &dst);
-    if (code != 0)
+    if (!code)
     {
         error = code;
     }
@@ -30,7 +30,7 @@ const int HUD::render() const
     dst.x = TILE_SIZE / 2 + COUNTER_PADDING * 2;
     dst.w = neutron_counter.getImage()->w;
     code = neutron_counter.render(&src, &dst);
-    if (code != 0)
+    if (!code)
     {
         error = code;
     }
@@ -39,7 +39,7 @@ const int HUD::render() const
     dst.y = TILE_SIZE / 2 + COUNTER_PADDING * 2;
     dst.w = proton_counter.getImage()->w;
     code = proton_counter.render(&src, &dst);
-    if (code != 0)
+    if (!code)
     {
         error = code;
     }
@@ -50,7 +50,7 @@ const int HUD::render() const
     dst.y = TILE_SIZE / 2 + COUNTER_PADDING * 2;
     dst.w = TILE_SIZE / 2;
     code = image.render(&src, &dst);
-    if (code != 0)
+    if (!code)
     {
         error = code;
     }

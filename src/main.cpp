@@ -48,19 +48,26 @@ bool MoleApp::onInit()
     {
         return false;
     }
+    
+    srand(time(NULL));
 
     // Construct objects
     background = new Background(this);
     dirt = new Dirt(this);
     player = new Player(this);
     collectable = new Collectable(this);
+    darkMatter = new DarkMatter(this);
     hud = new HUD(this);
     ADD_RENDER_OBJECT(background)
     ADD_RENDER_OBJECT(dirt)
     ADD_RENDER_UPDATE_OBJECT(player)
     ADD_RENDER_OBJECT(collectable)
+    ADD_RENDER_UPDATE_OBJECT(darkMatter)
     ADD_RENDER_OBJECT(hud)
-
+    for (int i = 0; i< 1; i++)
+    {
+        darkMatter->addEnemy();
+    }
     previousTime = std::chrono::high_resolution_clock::now();
 
     return true;

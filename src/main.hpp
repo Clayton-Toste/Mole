@@ -12,10 +12,12 @@
 #define ADD_RENDER(object) renderables.push_back(object);
 #define ADD_UPDATE(object) updateables.push_back(object);
 #define ADD_OBJECT(object) objects.push_back(object);
-#define ADD_RENDER_OBJECT(object) ADD_RENDER(object) \
-ADD_OBJECT(object)
-#define ADD_RENDER_UPDATE_OBJECT(object) ADD_UPDATE(object) \
-ADD_RENDER_OBJECT(object)
+#define ADD_RENDER_OBJECT(object) \
+    ADD_RENDER(object)            \
+    ADD_OBJECT(object)
+#define ADD_RENDER_UPDATE_OBJECT(object) \
+    ADD_UPDATE(object)                   \
+    ADD_RENDER_OBJECT(object)
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -26,11 +28,13 @@ ADD_RENDER_OBJECT(object)
 #include <iostream>
 #include <chrono>
 #include <list>
+#include <ctime>
 
 class Background;
 class Dirt;
 class Player;
 class Collectable;
+class DarkMatter;
 class HUD;
 
 class MoleApp
@@ -75,6 +79,7 @@ public:
     Dirt *dirt;
     Player *player;
     Collectable *collectable;
+    DarkMatter *darkMatter;
     HUD *hud;
 
     time_t deltaTime;
@@ -84,4 +89,5 @@ public:
 #include "bg.hpp"
 #include "player.hpp"
 #include "collectable.hpp"
+#include "darkmatter.hpp"
 #include "hud.hpp"

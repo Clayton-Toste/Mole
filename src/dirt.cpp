@@ -35,11 +35,13 @@ const int Dirt::render() const
             {
                 continue;
             }
+            
             texture = TEXTURE_HASH(i + (int)app->scroll, j);
             src = SDL_Rect{TILE_TEXTURE_SIZE * texture, 0, TILE_TEXTURE_SIZE, TILE_TEXTURE_SIZE};
             dst = SDL_Rect{j * TILE_SIZE - 1 * TEXTURE_PIXEL, (i - fract_part) * TILE_SIZE - 1 * TEXTURE_PIXEL, TILE_TEXTURE_SIZE, TILE_TEXTURE_SIZE};
             code = image.render(&src, &dst);
-            if (code != 0)
+
+            if (!code)
             {
                 error = code;
             }

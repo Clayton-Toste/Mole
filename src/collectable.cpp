@@ -66,7 +66,7 @@ const int Collectable::render() const
         src = SDL_Rect{TILE_SIZE * bool(texture & 8), 0, TILE_SIZE, TILE_SIZE};
         dst = SDL_Rect{TILE_SIZE * (texture & 7), (i - fract_part) * TILE_SIZE - 1 * TEXTURE_PIXEL, TILE_TEXTURE_SIZE, TILE_TEXTURE_SIZE};
         code = image.render(&src, &dst);
-        if (code != 0)
+        if (!code)
         {
             error = code;
         }

@@ -20,6 +20,10 @@
 #define TILE_AT(x_offset, y_offset) bool(app->tiles[TILE_Y(y_offset)] & TILE_X(x_offset))
 
 #define PLAYER_DEPTH 5
+#define PLAYER_WIDTH 60
+#define PLAYER_CENTER_HEIGHT TILE_TEXTURE_SIZE / 2
+#define PLAYER_CENTER_WIDTH TILE_TEXTURE_SIZE / 2
+#define PLAYER_CENTER_RADIUS TILE_TEXTURE_SIZE / 2 
 
 #include <cmath>
 #include <math.h>
