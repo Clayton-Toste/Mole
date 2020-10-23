@@ -103,14 +103,14 @@ const int Player::update()
         if (movement >= std::numeric_limits<unsigned int>::max() - app->deltaTime * FALL_SPEED)
         {
             app->tile_scroll += 1;
-            app->scroll = app->tile_scroll;
+            app->scroll = 0;
             app->addRow();
             endAction(still_down);
             return 0;
         }
         frame += app->deltaTime * ANIMATION_SPEED_FALL;
         movement += FALL_SPEED * app->deltaTime;
-        app->scroll = app->tile_scroll + (float)movement / (float)std::numeric_limits<unsigned int>::max();
+        app->scroll = (float)movement / (float)std::numeric_limits<unsigned int>::max();
         return 0;
     }
 
@@ -127,6 +127,19 @@ const int Player::update()
         frame += app->deltaTime * ANIMATION_SPEED_MOVE;
         movement += MOVE_SPEED * app->deltaTime;
         x = tile_x + (current_state - 7) * (float)movement / (float)std::numeric_limits<unsigned int>::max();
+        return 0;
+    }
+
+    // Losing
+    if (current_state == lose)
+    {
+        if (movement >= std::numeric_limits<unsigned int>::max() - app->deltaTime * LOSE_SPEED)
+        {
+            return 0;
+        }
+        frame += app->deltaTime * ANIMATION_SPEED_LOSE;
+        movement += LOSE_SPEED * app->deltaTime;
+        y = tile_y - LOSE_MOVEMENT((float)movement / (float)std::numeric_limits<unsigned int>::max());
         return 0;
     }
 

@@ -8,17 +8,15 @@ void DarkMatter::addEnemy()
     float c{cos(angle)}, s{sin(angle)};
     if (abs(c) > abs(s))
     {
-        std::cout << c << ',' << s << std::endl;
         enemies.emplace_back(Enemy{
-            rand() % SPAWN_RANGE + TOP_PADDING + app->scroll,
+            (rand() % SPAWN_RANGE) + TOP_PADDING + app->tile_scroll * TILE_SIZE,
             c,
             s});
     }
     else
     {
-        std::cout << s << ',' << c << std::endl;
         enemies.emplace_back(Enemy{
-            rand() % SPAWN_RANGE + TOP_PADDING + app->scroll,
+            (rand() % SPAWN_RANGE) + TOP_PADDING + app->tile_scroll * TILE_SIZE,
             s,
             -c});
     }
@@ -26,11 +24,17 @@ void DarkMatter::addEnemy()
 
 const int DarkMatter::update()
 {
+    // Try to add a new enemy
+    if (rand() < app->deltaTime * ENEMY_SPAWN_RATE * log2(sqrt(app->neutrons * app->protons+1)))
+    {
+        addEnemy();
+    }
+
     enemies.remove_if([this](Enemy &enemy) -> bool {
         // Update locations
         if (enemy.life > std::numeric_limits<unsigned int>::max() - app->deltaTime)
         {
-            //return true;
+            return true;
         }
 
         enemy.life += app->deltaTime * ENEMY_SPEED;
@@ -46,9 +50,9 @@ const int DarkMatter::update()
         }
 
         // Check for collision with player
-        if ((ENEMY_CENTER_RADIUS + PLAYER_CENTER_RADIUS) * (ENEMY_CENTER_RADIUS + PLAYER_CENTER_RADIUS) > pow(enemy.currX - app->player->x * TILE_SIZE - PLAYER_CENTER_WIDTH, 2) + pow(enemy.currY + enemy.y - (app->player->y + app->scroll) * TILE_SIZE - PLAYER_CENTER_HEIGHT, 2))
+        if ((ENEMY_CENTER_RADIUS + PLAYER_CENTER_RADIUS) * (ENEMY_CENTER_RADIUS + PLAYER_CENTER_RADIUS) > pow(enemy.currX - app->player->x * TILE_SIZE - PLAYER_CENTER_WIDTH, 2) + pow(enemy.currY + enemy.y - app->player->y * TILE_SIZE  - app->tile_scroll * TILE_SIZE - app->scroll * TILE_SIZE - PLAYER_CENTER_HEIGHT, 2))
         {
-            std::cout << "game end" << std::endl;
+            app->gameOver();
         }
 
         return false;
@@ -66,7 +70,7 @@ const int DarkMatter::render() const
         texture = (enemy.life % ENEMY_ANIMATION_FRAMES_LENGTH) / ENEMY_ANIMATION_FRAME_LENGTH;
 
         src = SDL_Rect{texture * ENEMY_WIDTH, 0, ENEMY_WIDTH, ENEMY_HEIGHT};
-        dst = SDL_Rect{enemy.currX - ENEMY_CENTER_WIDTH, enemy.currY + enemy.y - app->scroll * TILE_SIZE - ENEMY_CENTER_HEIGHT, ENEMY_WIDTH, ENEMY_HEIGHT};
+        dst = SDL_Rect{enemy.currX - ENEMY_CENTER_WIDTH, enemy.currY + enemy.y - app->tile_scroll * TILE_SIZE - app->scroll * TILE_SIZE - ENEMY_CENTER_HEIGHT, ENEMY_WIDTH, ENEMY_HEIGHT};
 
         code = image.render(&src, &dst);
 

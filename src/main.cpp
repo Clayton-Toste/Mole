@@ -48,7 +48,7 @@ bool MoleApp::onInit()
     {
         return false;
     }
-    
+
     srand(time(NULL));
 
     // Construct objects
@@ -57,18 +57,17 @@ bool MoleApp::onInit()
     player = new Player(this);
     collectable = new Collectable(this);
     darkMatter = new DarkMatter(this);
-    hud = new HUD(this);
+    gui = new GUI(this);
     ADD_RENDER_OBJECT(background)
     ADD_RENDER_OBJECT(dirt)
     ADD_RENDER_UPDATE_OBJECT(player)
     ADD_RENDER_OBJECT(collectable)
     ADD_RENDER_UPDATE_OBJECT(darkMatter)
-    ADD_RENDER_OBJECT(hud)
-    for (int i = 0; i< 1; i++)
-    {
-        darkMatter->addEnemy();
-    }
+    ADD_RENDER_OBJECT(gui)
+
     previousTime = std::chrono::high_resolution_clock::now();
+
+    gameStart();
 
     return true;
 }
@@ -104,8 +103,18 @@ void MoleApp::onEvent(const SDL_Event *const event)
             player->current_action = Player::move_right;
             break;
         case SDLK_SPACE:
-            player->dig();
+            if (state == results)
+            {
+                gameStart();
+            }
+            else
+            {
+                player->dig();
+            }
+        default:
+            return ;
         }
+        state = playing;
         break;
     case SDL_KEYUP:
         switch (event->key.keysym.sym)
@@ -203,6 +212,30 @@ void MoleApp::addRow()
 {
     dirt->addRow();
     collectable->addRow();
+}
+
+void MoleApp::gameOver()
+{
+    state = results;
+    player->current_state = Player::lose;
+}
+
+void MoleApp::gameStart()
+{
+    state = tutorial;
+    protons = 0;
+    neutrons = 0;
+    gui->update_counters();
+    player->current_state = Player::falling;
+    player->y = PLAYER_DEPTH;
+    do
+    {
+        tile_scroll = rand()%100000;
+        player->tile_x = rand()%8;
+        dirt->fill();
+    } while ((tiles[(player->tile_y + tile_scroll) % LOADED_TILES] & (1 << player->tile_x)));
+    scroll = 0;
+    player->x = player->tile_x;
 }
 
 int main(int argc, char *argv[])

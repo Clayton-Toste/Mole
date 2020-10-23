@@ -8,12 +8,15 @@
 #define ANIMATION_SPEED_MOVE 5
 #define ANIMATION_SPEED_DIG ANIMATION_SPEED_MOVE
 #define ANIMATION_SPEED_FALL 12
+#define ANIMATION_SPEED_LOSE ANIMATION_SPEED_FALL
 
 #define MOVE_SPEED 25
 #define FALL_SPEED 40
 #define DIG_SPEED 32
+#define LOSE_SPEED 5
 
 #define DIG_MOVEMENT(n) n *(1 - n)
+#define LOSE_MOVEMENT(n) n *(16 - 32 * n)
 
 #define TILE_Y(offset) (app->tile_scroll + tile_y + offset) % LOADED_TILES
 #define TILE_X(offset) 1 << (tile_x + offset)
@@ -23,7 +26,7 @@
 #define PLAYER_WIDTH 60
 #define PLAYER_CENTER_HEIGHT TILE_TEXTURE_SIZE / 2
 #define PLAYER_CENTER_WIDTH TILE_TEXTURE_SIZE / 2
-#define PLAYER_CENTER_RADIUS TILE_TEXTURE_SIZE / 2 
+#define PLAYER_CENTER_RADIUS TILE_TEXTURE_SIZE / 2
 
 #include <cmath>
 #include <math.h>
@@ -54,7 +57,6 @@ public:
     float x{0}, y{PLAYER_DEPTH};
     int tile_x{0}, tile_y{PLAYER_DEPTH};
 
-private:
     enum state
     {
         still_down,
@@ -64,12 +66,14 @@ private:
         falling,
         moving_left = 6,
         moving_right = 8,
-        diging_down = 10,
+        lose,
+        diging_down,
         diging_left,
         diging_up,
         diging_right,
     } current_state{falling};
 
+private:
     void updateAction();
     void endAction(const state end);
 

@@ -24,6 +24,7 @@
 
 #include "object.hpp"
 #include "components.hpp"
+#include "periodictable.hpp"
 
 #include <iostream>
 #include <chrono>
@@ -35,7 +36,7 @@ class Dirt;
 class Player;
 class Collectable;
 class DarkMatter;
-class HUD;
+class GUI;
 
 class MoleApp
 {
@@ -63,6 +64,15 @@ public:
     int execute();
 
     void addRow();
+    void gameOver();
+    void gameStart();
+
+    enum
+    {
+        tutorial,
+        playing,
+        results
+    } state{tutorial};
 
     SDL_Window *display;
     SDL_Surface *surface;
@@ -71,7 +81,7 @@ public:
     signed char collectables[LOADED_TILES] = {};
 
     long double scroll{0};
-    unsigned long int tile_scroll{0};
+    unsigned int tile_scroll{0};
 
     unsigned int protons{0}, neutrons{0};
 
@@ -80,7 +90,7 @@ public:
     Player *player;
     Collectable *collectable;
     DarkMatter *darkMatter;
-    HUD *hud;
+    GUI *gui;
 
     time_t deltaTime;
 };
@@ -90,4 +100,4 @@ public:
 #include "player.hpp"
 #include "collectable.hpp"
 #include "darkmatter.hpp"
-#include "hud.hpp"
+#include "gui.hpp"

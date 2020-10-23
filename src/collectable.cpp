@@ -46,25 +46,24 @@ void Collectable::collect()
     {
         app->neutrons++;
     }
-    app->hud->update_counters();
+    app->gui->update_counters();
     app->collectables[(app->player->tile_y + app->tile_scroll) % LOADED_TILES] = -1;
 }
 
 const int Collectable::render() const
 {
     int error, code{0};
-    double int_part, fract_part{modf(app->scroll, &int_part)};
     SDL_Rect src, dst;
 
     for (unsigned char i = 0; i <= TILE_HEIGHT; ++i)
     {
-        signed char texture{app->collectables[(int)(int_part + i) % LOADED_TILES]};
+        signed char texture{app->collectables[(int)(app->tile_scroll + i) % LOADED_TILES]};
         if (texture < 0)
         {
             continue;
         }
         src = SDL_Rect{TILE_SIZE * bool(texture & 8), 0, TILE_SIZE, TILE_SIZE};
-        dst = SDL_Rect{TILE_SIZE * (texture & 7), (i - fract_part) * TILE_SIZE - 1 * TEXTURE_PIXEL, TILE_TEXTURE_SIZE, TILE_TEXTURE_SIZE};
+        dst = SDL_Rect{TILE_SIZE * (texture & 7), (i - app->scroll) * TILE_SIZE - 1 * TEXTURE_PIXEL, TILE_TEXTURE_SIZE, TILE_TEXTURE_SIZE};
         code = image.render(&src, &dst);
         if (!code)
         {

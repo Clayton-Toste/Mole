@@ -1,5 +1,7 @@
 #include "imagehelper.hpp"
 
+ImageHelper::ImageHelper(MoleApp *const app) : Object(app){ }
+
 ImageHelper::ImageHelper(MoleApp *const app, const char *const name) : Object(app)
 {
     if (name == nullptr)
@@ -9,6 +11,18 @@ ImageHelper::ImageHelper(MoleApp *const app, const char *const name) : Object(ap
     if (!setImage(name))
     {
         std::cout << "Failed to create image " << name << ".\n";
+    }
+}
+
+ImageHelper::ImageHelper(MoleApp *const app, const char *const text, const unsigned char size) : Object(app)
+{
+    if (text == nullptr)
+    {
+        return;
+    }
+    if (!setText(text, size))
+    {
+        std::cout << "Failed to create text " << text << ".\n";
     }
 }
 

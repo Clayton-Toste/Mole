@@ -15,7 +15,9 @@ class ImageHelper : public Object
 {
 
 public:
-    ImageHelper(MoleApp *const app, const char *const image = nullptr);
+    ImageHelper(MoleApp *const app);
+    ImageHelper(MoleApp *const app, const char *const image);
+    ImageHelper(MoleApp *const app, const char *const text, const unsigned char size);
     ~ImageHelper();
 
     int render(const SDL_Rect *const srcrect = NULL, SDL_Rect *const dstrect = NULL) const;
