@@ -111,6 +111,7 @@ void MoleApp::onEvent(const SDL_Event *const event)
             {
                 player->dig();
             }
+            break;
         default:
             return ;
         }
